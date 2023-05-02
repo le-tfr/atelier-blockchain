@@ -5,7 +5,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* Styles pour les Ã©crans de taille supÃ©rieure Ã  768px */
+/* Styles pour les ecrans de taille superieure a 768px */
 @media screen and (min-width: 768px) {
     body {
       background: #000;
@@ -58,12 +58,11 @@
         background: url('images/background.jpg') no-repeat;
         background-size: cover;
         background-position: center;
-        filter: blur(10px);
     }
         
   }
   
-  /* Styles pour les Ã©crans de taille infÃ©rieure Ã  768px */
+  /* Styles pour les ecrans de taille inferieure a 768px */
   @media screen and (max-width: 767px) {
     body {
       width: 100%;
