@@ -91,25 +91,79 @@ class App extends Component {
     this.setState({ proposals });
   };
 
+  startProposal = async () => {
+    const { accounts, contract } = this.state;
+    const proposalName = document.getElementById("newProposalName").value;
+
+    try {
+      await contract.methods.startProposal(proposalName).send({ from: accounts[0] });
+      alert("La proposition a été créée !");
+    } catch (error) {
+      alert("Une erreur est survenue lors de la création de la proposition.");
+      console.error(error);
+    }
+  };
+
+  startVoting = async () => {
+    const { accounts, contract } = this.state;
+    try {
+      await contract.methods.startVoting().send({ from: accounts[0] });
+      alert("Vote lancé avec succès !");
+    } catch (error) {
+      alert("Une erreur est survenue lors du lancement du vote.");
+      console.error(error);
+    }
+  };
+
+  endVoting = async () => {
+    const { accounts, contract } = this.state;
+    try {
+      await contract.methods.endVoting().send({ from: accounts[0] });
+      alert("Vote terminé avec succès !");
+    } catch (error) {
+      alert("Une erreur est survenue lors de la fin du vote.");
+      console.error(error);
+    }
+  };
+
   render() {
+    const { isOwner } = this.state;
+
     return (
       <div className="App">
         <div className="flex flex-col justify-between min-h-screen">
           <div className="flex-1">
             <header className="header">Voting DApp</header>
-            <div className="register-container">
-              <h2>Register Voter</h2>
-              <div className="flex space-x-4">
-                <input
-                  type="text"
-                  id="voterAddress"
-                  placeholder="Voter Address"
-                />
-                <button id="registerVoterBtn" onClick={this.registerVoter}>
-                  Register Voter
-                </button>
+            {isOwner && (
+              <div className="register-container">
+                <h2>Register Voter</h2>
+                <div className="flex space-x-4">
+                  <input
+                    type="text"
+                    id="voterAddress"
+                    placeholder="Voter Address"
+                  />
+                  <button id="registerVoterBtn" onClick={this.registerVoter}>
+                    Register Voter
+                  </button>
+                </div>
+
+
+                <div className="voting-controls-container">
+                  <h2>Admin Voting Controls</h2>
+                  <button id="startVotingBtn" onClick={this.startVoting}>
+                    Start Voting
+                  </button>
+                  <button id="endVotingBtn" onClick={this.endVoting}>
+                    End Voting
+                  </button>
+                </div>
+                
               </div>
-            </div>
+
+              
+              
+            )}
             <div className="register-container">
               <h2>Register Proposal</h2>
               <div className="flex space-x-4">
@@ -154,5 +208,6 @@ class App extends Component {
       </div>
     );
   }
-  }
-  export default App;         
+}
+
+export default App;
