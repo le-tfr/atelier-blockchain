@@ -1,0 +1,22 @@
+const contractAddress = "your_contract_address_here"; // Remplacez par l'adresse de votre contrat déployé
+const abi = []; // Remplacez par l'ABI de votre contrat
+
+async function initWeb3() {
+  if (window.ethereum) {
+    window.web3 = new Web3(window.ethereum);
+    await window.ethereum.enable();
+  } else {
+    window.alert("Please install MetaMask to use this dApp!");
+  }
+}
+
+async function registerVoter() {
+  const voterAddress = document.getElementById("voterAddress").value;
+  const accounts = await window.web3.eth.getAccounts();
+  const contract = new window.web3.eth.Contract(abi, contractAddress);
+  await contract.methods.registerVoter(voterAddress).send({ from: accounts[0] });
+}
+
+initWeb3().then(() => {
+  document.getElementById("registerVoterBtn").addEventListener("click", registerVoter);
+});
