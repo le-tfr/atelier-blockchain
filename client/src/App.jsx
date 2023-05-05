@@ -1,8 +1,7 @@
-// ./client/src/App.js
-import React, { Component } from "react"
-import Voting from "../../build/contracts/Voting.json"
-import getWeb3 from "./getWeb3"
-import "./App.css"
+import React, { Component } from "react";
+import Voting from "../../build/contracts/Voting.json";
+import getWeb3 from "./getWeb3";
+import "./App.css";
 
 class App extends Component {
   state = {
@@ -11,146 +10,149 @@ class App extends Component {
     contract: null,
     userAddress: null,
     isOwner: false,
-  }
-
-  // componentDidMount : méthode qui permet de lancer une fonction au moment ou app.js est instancié, si la page se lance bien elle envoie componentDidMount
+    proposals: [],
+  };
 
   componentDidMount = async () => {
     try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3()
-
-      // Use web3 to get the user's accounts.
-      /* on récupère le tableau des comptes sur le metamask du user */
-      const accounts = await web3.eth.getAccounts()
-
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId()
-      const deployedNetwork = Voting.networks[networkId]
-      console.log("deployedNetwork", deployedNetwork)
-      /* Création de l'objet de contrat avec l'abi, le deployedNetwork et son address  */
+      const web3 = await getWeb3();
+      const accounts = await web3.eth.getAccounts();
+      const networkId = await web3.eth.net.getId();
+      const deployedNetwork = Voting.networks[networkId];
       const instance = new web3.eth.Contract(
         Voting.abi,
         deployedNetwork && deployedNetwork.address
-      )
+      );
 
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance })
+      this.setState({ web3, accounts, contract: instance });
 
-      let account = accounts[0]
+      let account = accounts[0];
 
       this.setState({
         userAddress: account.slice(0, 6) + "..." + account.slice(38, 42),
-      })
+      });
 
-			// Check if the user is the owner
-      const owner = await instance.methods.owner().call()
+      const owner = await instance.methods.owner().call();
       if (account === owner) {
         this.setState({
           isOwner: true,
-        })
+        });
       }
-
     } catch (error) {
-      // Catch any errors for any of the above operations.
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`
-      )
-      console.error(error)
+      );
+      console.error(error);
     }
-  }
-render() {
-  return (
-    <div className="App">
-      <div className="flex flex-col justify-between min-h-screen">
-        <div className="flex-1">
-          <header>
-            <nav className="bg-yellow-10 border-yellow-30  z-50 fixed w-full">
-              <div className="sm:px-6 sm:py-3 md:px-8 md:py-6 flex flex-row items-center justify-between border border-b">
-                <div className="flex flex-row items-center">
-                  <a className="logo md:w-170 w-80" href="/">
-                    Vote DApp
-                  </a>
-                </div>
-                <div className="flex">
-                  <button className="p-1 block md:hidden">
-                    <svg
-                      stroke="currentColor"
-                      fill="currentColor"
-                      strokeWidth="0"
-                      viewBox="0 0 24 24"
-                      className="h-8 w-auto"
-                      height="1em"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
-                    </svg>
-                  </button>
-                </div>
-                <ul className="hidden list-none md:flex flex-row gap-4 items-baseline ml-10">
-                  <li>
-                    <button
-                      id="web3-status-connected"
-                      className="web3-button"
-                    >
-                      <p className="Web3StatusText">
-                        {this.state.userAddress}
-                      </p>
-                      <div
-                        size="16"
-                        className="Web3Status__IconWrapper-sc-wwio5h-0 hqHdeW"
-                      >
-                        <div className="Identicon__StyledIdenticon-sc-1ssoit4-0 kTWLky">
-                          <span>
-                            <div className="avatar">
-                              <svg x="0" y="0" width="16" height="16">
-                                <rect
-                                  x="0"
-                                  y="0"
-                                  width="16"
-                                  height="16"
-                                  transform="translate(-1.1699893080448718 -1.5622487594391614) rotate(255.7 8 8)"
-                                  fill="#2379E1"
-                                ></rect>
-                                <rect
-                                  x="0"
-                                  y="0"
-                                  width="16"
-                                  height="16"
-                                  transform="translate(4.4919645360147475 7.910549295855059) rotate(162.8 8 8)"
-                                  fill="#03595E"
-                                ></rect>
-                                <rect
-                                  x="0"
-                                  y="0"
-                                  width="16"
-                                  height="16"
-                                  transform="translate(11.87141302372359 2.1728091065947037) rotate(44.1 8 8)"
-                                  fill="#FB1877"
-                                ></rect>
-                              </svg>
-                            </div>
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-                  </li>
-                </ul>
+  };
+
+  registerVoter = async () => {
+    const { accounts, contract } = this.state;
+    const voterAddress = document.getElementById("voterAddress").value;
+
+    try {
+      await contract.methods.registerVoter(voterAddress).send({ from: accounts[0] });
+      alert("Électeur enregistré avec succès !");
+    } catch (error) {
+      alert("Une erreur est survenue lors de l'enregistrement de l'électeur.");
+      console.error(error);
+    }
+  };
+
+  registerProposal = async () => {
+    const { accounts, contract } = this.state;
+    const proposalName = document.getElementById("proposalName").value;
+
+    try {
+      await contract.methods.registerProposal(proposalName).send({ from: accounts[0] });
+      alert("Proposition enregistrée avec succès !");
+    } catch (error) {
+      alert("Une erreur est survenue lors de l'enregistrement de la proposition.");
+      console.error(error);
+    }
+  };
+
+  vote = async () => {
+    const { accounts, contract } = this.state;
+    const proposalId = parseInt(document.getElementById("proposalId").value);
+
+    try {
+      await contract.methods.vote(proposalId).send({ from: accounts[0] });
+      alert("Vote effectué avec succès !");
+    } catch (error) {
+      alert("Une erreur est survenue lors du vote.");
+      console.error(error);
+    }
+  };
+
+  getResults = async () => {
+    const { contract } = this.state;
+    const proposals = await contract.methods.getProposals().call();
+    this.setState({ proposals });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <div className="flex flex-col justify-between min-h-screen">
+          <div className="flex-1">
+            <header className="header">Voting DApp</header>
+            <div className="register-container">
+              <h2>Register Voter</h2>
+              <div className="flex space-x-4">
+                <input
+                  type="text"
+                  id="voterAddress"
+                  placeholder="Voter Address"
+                />
+                <button id="registerVoterBtn" onClick={this.registerVoter}>
+                  Register Voter
+                </button>
               </div>
-            </nav>
-          </header>
-          <h1>Voting Dapp</h1>
-        <div>
-            <h2>Register Voter</h2>
-            <input type="text" id="voterAddress" placeholder="Voter Address"/>
-            <button id="registerVoterBtn">Register Voter</button>
+            </div>
+            <div className="register-container">
+              <h2>Register Proposal</h2>
+              <div className="flex space-x-4">
+                <input
+                  type="text"
+                  id="proposalName"
+                  placeholder="Proposal Name"
+                />
+                <button id="registerProposalBtn" onClick={this.registerProposal}>
+                  Register Proposal
+                </button>
+              </div>
+            </div>
+            <div className="register-container">
+              <h2>Vote for Proposal</h2>
+              <div className="flex space-x-4">
+                <input
+                  type="number"
+                  id="proposalId"
+                  placeholder="Proposal ID"
+                />
+                <button id="voteBtn" onClick={this.vote}>
+                  Vote
+                </button>
+              </div>
+            </div>
+            <div className="results-container">
+              <h2>Results</h2>
+              <button id="getResultsBtn" onClick={this.getResults}>
+                Get Results
+              </button>
+              <ul className="results-list">
+                {this.state.proposals.map((proposal, index) => (
+                  <li key={index}>
+                    {proposal.name}: {proposal.voteCount} votes
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
-          </div>
-          </div>
-          </div>
-  )
-}
-}
-export default App
+      </div>
+    );
+  }
+  }
+  export default App;         
