@@ -1,4 +1,4 @@
-const contractAddress = "your_contract_address_here"; // Remplacez par l'adresse de votre contrat déployé
+const contractAddress = "0xC2dfC06B710302A7e11C612b2a50a88743b0F7E4"; // Remplacez par l'adresse de votre contrat déployé
 const abi = []; // Remplacez par l'ABI de votre contrat
 
 async function initWeb3() {
