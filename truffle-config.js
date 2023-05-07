@@ -16,7 +16,7 @@ module.exports = {
           mnemonic,
           infuraUrl
         ),
-      network_id: 3,
+      network_id: 1337,
       gas: 5500000,
       gasPrice: 20000000000, // 20 Gwei
     },
