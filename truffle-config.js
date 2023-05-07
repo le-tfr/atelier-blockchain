@@ -1,5 +1,7 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
-const mnemonic = "season rib luggage horror delay provide alley affair buddy buffalo host arm"; // Remplacez par votre propre mnémonique
+const mnemonic = `${process.env.MNEMONIC}`;
+const infuraId = `${process.env.INFURA_ID}`;
+const infuraUrl = `https://ropsten.infura.io/v3/${infuraId}`;
 
 module.exports = {
   networks: {
@@ -12,10 +14,11 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           mnemonic,
-          "https://mainnet.infura.io/v3/4cf512758c39416cb16fa6a8087546c7" // Remplacez par votre propre clé de projet Infura
+          infuraUrl
         ),
       network_id: 3,
       gas: 5500000,
+      gasPrice: 20000000000, // 20 Gwei
     },
   },
 
