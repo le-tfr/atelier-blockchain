@@ -9,6 +9,7 @@ module.exports = {
       host: "127.0.0.1",
       port: 7545, // Port de votre blockchain locale, par exemple Ganache
       network_id: "*", // Correspond à tous les identifiants de réseau
+      outputPath: "./build"
     },
     ropsten: {
       provider: () =>
@@ -32,5 +33,8 @@ module.exports = {
         },
       },
     },
+  },
+  paths: {
+    build: "./build"
   },
 };
